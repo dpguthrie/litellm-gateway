@@ -27,6 +27,12 @@ curl-noauth:
 		-H 'Authorization: Bearer sk-1234567890' \
 		-d '{"model": "gpt-4o", "messages": [{"role": "system", "content": "You are an LLM named gpt-4o"}, {"role": "user", "content": "what is your name?"}]}'
 
-.PHONY: run run-litellm curl curl-noauth
+# Expose local server via ngrok (run in separate terminal after 'make run')
+ngrok:
+	@echo "Starting ngrok tunnel to localhost:4000..."
+	@echo "Make sure LiteLLM is running (make run) before using this!"
+	ngrok http 4000
+
+.PHONY: run run-litellm curl curl-noauth ngrok
 
 

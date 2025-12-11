@@ -77,6 +77,67 @@ make curl-noauth
 
 Returns 401: `Missing x-user-email header`
 
+## Exposing Locally with ngrok
+
+To expose your local LiteLLM server publicly (for testing from external services, sharing with teammates, etc.), use ngrok:
+
+### 1. Install ngrok
+
+If not already installed:
+```bash
+# macOS
+brew install ngrok
+
+# Or download from https://ngrok.com/download
+```
+
+### 2. Authenticate ngrok
+
+```bash
+ngrok config add-authtoken YOUR_NGROK_TOKEN
+```
+
+Get your auth token from: https://dashboard.ngrok.com/get-started/your-authtoken
+
+### 3. Start LiteLLM (in one terminal)
+
+```bash
+make run
+```
+
+### 4. Start ngrok tunnel (in another terminal)
+
+```bash
+make ngrok
+```
+
+Or directly:
+```bash
+ngrok http 4000
+```
+
+You'll see output like:
+```
+Forwarding   https://abc123.ngrok.io -> http://localhost:4000
+```
+
+### 5. Use the ngrok URL
+
+Now you can make requests to your public ngrok URL:
+
+```bash
+curl -X POST 'https://abc123.ngrok.io/chat/completions' \
+  -H 'Content-Type: application/json' \
+  -H 'Authorization: Bearer sk-1234567890' \
+  -H 'x-user-email: user@example.com' \
+  -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello!"}]}'
+```
+
+**Bonus:** Add a custom subdomain (requires ngrok paid plan):
+```bash
+ngrok http 4000 --domain=your-custom-domain.ngrok-free.app
+```
+
 ## Customizing Auth Logic
 
 Edit `custom_auth.py` and modify the `is_email_allowed()` function:
