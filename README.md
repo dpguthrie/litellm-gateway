@@ -138,6 +138,50 @@ curl -X POST 'https://abc123.ngrok.io/chat/completions' \
 ngrok http 4000 --domain=your-custom-domain.ngrok-free.app
 ```
 
+## Using as a Custom Provider in Braintrust
+
+Once your LiteLLM gateway is running (via ngrok), you can add it as a custom provider in Braintrust for evaluations, experiments, and observability.
+
+### Why Use This with Braintrust?
+
+- **Unified observability** - Track requests across multiple LLM providers through a single gateway
+- **Custom auth** - Enforce your x-user-email authentication in Braintrust experiments
+- **Cost tracking** - Monitor usage and costs across OpenAI, Anthropic, Groq, etc. in one place
+- **A/B testing** - Compare different models and providers in Braintrust experiments
+
+### Setup in Braintrust
+
+1. **Go to Braintrust Settings** → AI Providers → Add Custom Provider
+
+2. **Configure the provider:**
+
+   **For local testing:**
+   - **Name:** LiteLLM Gateway (Local)
+   - **Base URL:** `http://ngrok-url:4000`
+   - **API Key:** `sk-1234567890` (or any value - matches Authorization header)
+
+   **For remote/production (with ngrok):**
+   - **Name:** LiteLLM Gateway
+   - **Base URL:** `https://YOUR-NGROK-URL.ngrok.io`
+   - **API Key:** `sk-1234567890`
+
+3. **Add custom headers:**
+   - Header: `x-user-email`
+   - Value: `your-email@example.com` (required by the auth hook)
+
+4. **Test the connection** in Braintrust's Playground
+
+
+### Available Models
+
+The models configured in this gateway:
+- `gpt-4o` - OpenAI GPT-4o
+- `gpt-4o-mini` - OpenAI GPT-4o Mini
+- `claude-4` - Anthropic Claude Sonnet 4
+- `llama-3.3-70b` - Groq Llama 3.3 70B
+
+Learn more: [Braintrust Custom Providers Documentation](https://www.braintrust.dev/docs/integrations/ai-providers/custom)
+
 ## Customizing Auth Logic
 
 Edit `custom_auth.py` and modify the `is_email_allowed()` function:
